@@ -8,6 +8,7 @@ import pdfplumber
 
 
 class Application(tk.Tk):
+
     def __init__(self):
         super().__init__()
 
@@ -109,9 +110,6 @@ class Application(tk.Tk):
                 else:
                     lines_without_noratel.append(line)
 
-            # with open('raw_text_without_Noratel.txt', 'w+') as f:
-            #     f.writelines(lines_without_noratel)
-
             # _________________________________remove page and table header lines_________________________________
             lines_without_header = []
             avoid_line_number = -1
@@ -122,11 +120,8 @@ class Application(tk.Tk):
                     continue
                 lines_without_header.append(lines_without_noratel[i])
 
-            # with open('raw_text_without_header.txt', 'w+') as f:
-            #     f.writelines(lines_without_header)
-
             # _________________________________Get employee details fromnoratel and header filtered data_________________________________
-            final_lines = []
+            final_lines = [f"Data up to {last_update}\n",]
             avoid_employee_count_line = -1
             for line_no in range(len(lines_without_header)):
                 # check plant
@@ -178,23 +173,26 @@ class Application(tk.Tk):
 
         else:
             with open('final_employee_list.txt', 'w+') as f:
-                f.writelines(
-                    "Invalid File Selected - The file you have selected is incorrect. Please select the correct file and try again.")
+                f.writelines("Invalid File Selected - The file you have selected is incorrect. Please select the correct file and try again.")
 
             # Open file in editor
             os.startfile('final_employee_list.txt')
 
     def filter(self):
         filter_text = self.filter_entry.get().lower()
+        try:
+            with open('final_employee_list.txt', 'r') as f:
+                raw_lines = f.readlines()
 
-        with open('final_employee_list.txt', 'r') as f:
-            raw_lines = f.readlines()
+            last_update = raw_lines[0][11:-1] 
 
-        filtered_lines = []
-        for line in raw_lines:
-            line_lower = line.lower()
-            if filter_text in line_lower:
-                filtered_lines.append(line)
+            filtered_lines = [f"Data up to {last_update}, for latest updates please upload new set.\n\n",]
+            for line in raw_lines[1:]:
+                line_lower = line.lower()
+                if filter_text in line_lower:
+                    filtered_lines.append(line)
+        except:
+            filtered_lines = ['There is no data set.\n', 'Upload data set first.']
 
         with open('filtered_data.txt', 'w+') as f:
             f.writelines(filtered_lines)
