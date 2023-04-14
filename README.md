@@ -1,2 +1,10 @@
-# pdf_read_and_filter
-A python application to read pdf and get detailed from it. App also provide feature to filter data. Output will be displayed as .txt files. Used packages are tkinter and pdfplumber.
+# PDF Reader and Filter
+A python application to read pdf and get details from it. App also provides a feature to filter data. Output will be displayed as txt files. Used packages are tkinter and pdfplumber.
+
+
+## Setup
+
+```shell
+pip install -r requirements.txt
+python employee_list_app.py
+```
