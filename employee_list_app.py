@@ -92,7 +92,9 @@ class Application(tk.Tk):
             os.startfile('final_employee_list.txt')
             return
 
-        raw_lines = self.extract_text(filepath).splitlines()
+        self.extract_text(filepath)
+        with open('raw_text.txt', 'r') as f:
+                raw_lines = f.readlines()
 
         # _________________________________Get last update date of dataset_________________________________
         for line_no in range(len(raw_lines)):
