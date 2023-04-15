@@ -80,42 +80,42 @@ From : 2023-01-02 To :2023-01-08
 s.a.A. abcd L05636 0.00 0.00 0.00 0.00 0.00 0.00 - 78.5 0.02 2"""
 
 expected_employee_list = """Data up to 2023-01-08
-Nimal bandar			L00125 			P01			Administration			Administration
-Xys nfjld			T01112 			P01			Administration			Administration
-s.a.A. abc			T01113 			P01			Administration			Administration
-Kamal X.Y.			T01114 			P01			Administration			Administration
-Gyan 			T01115 			P01			Administration			Administration
-dkash djka			T01111 			P01			Drivers			
-sbvajhf dnkj			T01112 			P01			Drivers			
-s.a.A. abc			L05636 			P01			Drivers			
-Kamal X.Y.			T01114 			P01			Drivers			
-Gyan 			T01115 			P01			Drivers			
-Nimal bandar			L00125 			P01			Administration			Administration
-Xys nfjld			T01112 			P01			Administration			Administration
-s.a.A. abc			T01113 			P01			Administration			Administration
-Kamal X.Y.			T01114 			P01			Administration			Administration
-Gyan 			T01115 			P01			Administration			Administration
-dkash djka			T01111 			P01			Drivers			
-sbvajhf dnkj			T01112 			P01			Drivers			
-s.a.A. abc			L05636 			P01			Drivers			
-Kamal X.Y.			T01114 			P01			Drivers			
-Nimal bandar			L00125 			P03			Administration			Administration
-Xys nfjld			T01112 			P03			Administration			Administration
-s.a.A. abc			T01113 			P03			Administration			Administration
-Kamal X.Y.			T01114 			P03			Administration			Administration
-Gyan 			T01115 			P03			Administration			Administration
-dkash djka			T01111 			P03			Drivers			
-sbvajhf dnkj			T01112 			P03			Drivers			
-s.a.A. abc			L05636 			P03			Drivers			
-Kamal X.Y.			T01114 			P03			Drivers			
-Gyan 			T01115 			P03			Drivers			
-Nimal bandar			L00125 			P03			Administration			Administration
-Xys nfjld			T01112 			P03			Administration			Administration
-s.a.A. abc			T01113 			P03			Administration			Administration
-Kamal X.Y.			T01114 			P03			Administration			Administration
-Gyan 			T01115 			P03			Administration			Administration
-dkash djka			T01111 			P03			Drivers			
-sbvajhf dnkj			T01112 			P03			Drivers			
+Nimal bandara			L00125 			P01			Administration			Administration
+Xys nfjlda			T01112 			P01			Administration			Administration
+s.a.A. abcd			T01113 			P01			Administration			Administration
+Kamal X.Y.Z			T01114 			P01			Administration			Administration
+Gyan J			T01115 			P01			Administration			Administration
+dkash djkas			T01111 			P01			Drivers			
+sbvajhf dnkja			T01112 			P01			Drivers			
+s.a.A. abcd			L05636 			P01			Drivers			
+Kamal X.Y.Z			T01114 			P01			Drivers			
+Gyan J			T01115 			P01			Drivers			
+Nimal bandara			L00125 			P01			Administration			Administration
+Xys nfjlda			T01112 			P01			Administration			Administration
+s.a.A. abcd			T01113 			P01			Administration			Administration
+Kamal X.Y.Z			T01114 			P01			Administration			Administration
+Gyan J			T01115 			P01			Administration			Administration
+dkash djkas			T01111 			P01			Drivers			
+sbvajhf dnkja			T01112 			P01			Drivers			
+s.a.A. abcd			L05636 			P01			Drivers			
+Kamal X.Y.Z			T01114 			P01			Drivers			
+Nimal bandara			L00125 			P03			Administration			Administration
+Xys nfjlda			T01112 			P03			Administration			Administration
+s.a.A. abcd			T01113 			P03			Administration			Administration
+Kamal X.Y.Z			T01114 			P03			Administration			Administration
+Gyan J			T01115 			P03			Administration			Administration
+dkash djkas			T01111 			P03			Drivers			
+sbvajhf dnkja			T01112 			P03			Drivers			
+s.a.A. abcd			L05636 			P03			Drivers			
+Kamal X.Y.Z			T01114 			P03			Drivers			
+Gyan J			T01115 			P03			Drivers			
+Nimal bandara			L00125 			P03			Administration			Administration
+Xys nfjlda			T01112 			P03			Administration			Administration
+s.a.A. abcd			T01113 			P03			Administration			Administration
+Kamal X.Y.Z			T01114 			P03			Administration			Administration
+Gyan J			T01115 			P03			Administration			Administration
+dkash djkas			T01111 			P03			Drivers			
+sbvajhf dnkja			T01112 			P03			Drivers			
 """
 
 
