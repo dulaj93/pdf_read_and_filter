@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog, ttk
 
@@ -64,13 +65,13 @@ class Application(tk.Tk):
         filepath = filedialog.askopenfilename(filetypes=[('PDF Files', '*.pdf')])
         self.filepath_var.set(filepath)
 
-    def upload(self):
+    def upload(self, filepath=None):
         last_update = ''
         plant = ''
         department = ''
         section = ''
-
-        filepath = self.filepath_entry.get()
+        if not filepath:
+            filepath = self.filepath_entry.get()
 
         if '.pdf' in filepath:
 
@@ -202,4 +203,7 @@ class Application(tk.Tk):
 
 if __name__ == '__main__':
     app = Application()
-    app.mainloop()
+    if len(sys.argv) > 1:
+        app.upload(sys.argv[1])
+    else:
+        app.mainloop()
