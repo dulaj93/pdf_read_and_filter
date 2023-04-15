@@ -163,7 +163,7 @@ class Application(tk.Tk):
                 try:
                     for i in range(len(lines_without_header[line_no])):
                         if (lines_without_header[line_no][i] == 'T' or lines_without_header[line_no][i] == 'L') and lines_without_header[line_no][i+1].isdigit() and lines_without_header[line_no][i-1] == " ":
-                            name = lines_without_header[line_no][:i-2]
+                            name = lines_without_header[line_no][:i-1]
                             id = lines_without_header[line_no][i:i+7]
                             final_lines.append(name + '\t\t\t' + id + '\t\t\t' + plant +
                                                '\t\t\t' + department + '\t\t\t' + section + '\n')
