@@ -6,5 +6,16 @@ A python application to read pdf and get details from it. App also provides a fe
 
 ```shell
 pip install -r requirements.txt
+```
+
+### To open GUI
+
+```shell
 python employee_list_app.py
+```
+
+### To run without UI
+
+```shell
+python employee_list_app.py path/to/inpu.pdf
 ```

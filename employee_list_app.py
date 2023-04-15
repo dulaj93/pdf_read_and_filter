@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog, ttk
 
@@ -64,119 +65,116 @@ class Application(tk.Tk):
         filepath = filedialog.askopenfilename(filetypes=[('PDF Files', '*.pdf')])
         self.filepath_var.set(filepath)
 
-    def upload(self):
+    def extract_text(self, filepath=None):
+        with pdfplumber.open(filepath) as pdf_file:
+            page_text = [page.extract_text() for page in pdf_file.pages]
+
+        text = ''.join(page_text)
+
+        with open('raw_text.txt', 'w+') as txt_file:
+            txt_file.write(text)
+        return text
+
+    def upload(self, filepath=None):
         last_update = ''
         plant = ''
         department = ''
         section = ''
+        if not filepath:
+            filepath = self.filepath_entry.get()
 
-        filepath = self.filepath_entry.get()
+        if not filepath.endswith(".pdf"):
+            with open('final_employee_list.txt', 'w+') as f:
+                f.writelines(["Invalid File Selected - The file you have selected is incorrect.",
+                             "\nPlease select the correct file and try again."])
 
-        if '.pdf' in filepath:
+            # Open file in editor
+            os.startfile('final_employee_list.txt')
+            return
 
-            # ________________Open the PDF file in read-binary mode_________________________________
-            with pdfplumber.open(filepath) as pdf_file:
-                # Extract the text from each page of the PDF
-                page_text = [page.extract_text() for page in pdf_file.pages]
-
-                # Join the text from each page into a single string
-                text = ''.join(page_text)
-
-                # _________________________________Open a text file in write mode_________________________________
-                with open('raw_text.txt', 'w+') as txt_file:
-                    # Write the text to the file
-                    txt_file.write(text)
-
-            # _________________________________read raw_text file_________________________________
-            with open('raw_text.txt', 'r') as f:
+        self.extract_text(filepath)
+        with open('raw_text.txt', 'r') as f:
                 raw_lines = f.readlines()
 
-            # _________________________________Get last update date of dataset_________________________________
-            for line_no in range(len(raw_lines)):
-                # check last update date for one time
-                if not last_update:
-                    if 'Month End Summary' in raw_lines[line_no]:
-                        last_update = raw_lines[line_no+1][22:32]
-                        break
+        # _________________________________Get last update date of dataset_________________________________
+        for line_no in range(len(raw_lines)):
+            # check last update date for one time
+            if not last_update:
+                if 'Month End Summary' in raw_lines[line_no]:
+                    last_update = raw_lines[line_no+1][22:32]
+                    break
 
-            # _________________________________Remove 'Noratel International (Pvt) Ltd.'- part_________________________________
-            lines_without_noratel = []
-            for line in raw_lines:
-                if 'Noratel International (Pvt) Ltd.' in line:
-                    if line == 'Noratel International (Pvt) Ltd.\n':
-                        lines_without_noratel.append(line.replace("Noratel International (Pvt) Ltd.\n", ""))
-                    else:
-                        lines_without_noratel.append(line.replace("Noratel International (Pvt) Ltd.", ""))
+        # _________________________________Remove 'Noratel International (Pvt) Ltd.'- part_________________________________
+        lines_without_noratel = []
+        for line in raw_lines:
+            if 'Noratel International (Pvt) Ltd.' in line:
+                if line == 'Noratel International (Pvt) Ltd.\n':
+                    lines_without_noratel.append(line.replace("Noratel International (Pvt) Ltd.\n", ""))
                 else:
-                    lines_without_noratel.append(line)
+                    lines_without_noratel.append(line.replace("Noratel International (Pvt) Ltd.", ""))
+            else:
+                lines_without_noratel.append(line)
 
-            # _________________________________remove page and table header lines_________________________________
-            lines_without_header = []
-            avoid_line_number = -1
-            for i in range(len(lines_without_noratel)):
-                if 'Month End Summary' in lines_without_noratel[i]:
-                    avoid_line_number = i
-                if i >= avoid_line_number and i <= avoid_line_number+4:
-                    continue
-                lines_without_header.append(lines_without_noratel[i])
+        # _________________________________remove page and table header lines_________________________________
+        lines_without_header = []
+        avoid_line_number = -1
+        for i in range(len(lines_without_noratel)):
+            if 'Month End Summary' in lines_without_noratel[i]:
+                avoid_line_number = i
+            if i >= avoid_line_number and i <= avoid_line_number+4:
+                continue
+            lines_without_header.append(lines_without_noratel[i])
 
-            # _________________________________Get employee details fromnoratel and header filtered data_________________________________
-            final_lines = [f"Data up to {last_update}\n",]
-            avoid_employee_count_line = -1
-            for line_no in range(len(lines_without_header)):
-                # check plant
-                if lines_without_header[line_no] == 'P1\n' or lines_without_header[line_no] == 'P3\n':
-                    department = ''
-                    section = ''
-                    try:
-                        if not (' L0' in lines_without_header[line_no + 1]) and not (' T0' in lines_without_header[line_no + 1]) and not (len([char for char in lines_without_header[line_no + 1] if char.isdigit()]) >= 5):
-                            department = lines_without_header[line_no + 1][:-1]
-                        if not (' L0' in lines_without_header[line_no + 2]) and not (' T0' in lines_without_header[line_no + 2]) and not (len([char for char in lines_without_header[line_no + 2] if char.isdigit()]) >= 5):
-                            section = lines_without_header[line_no + 2][:-1]
-                    except:
-                        pass
+        # _________________________________Get employee details fromnoratel and header filtered data_________________________________
+        final_lines = [f"Data up to {last_update}\n", ]
+        avoid_employee_count_line = -1
+        for line_no in range(len(lines_without_header)):
+            # check plant
+            if lines_without_header[line_no] == 'P1\n' or lines_without_header[line_no] == 'P3\n':
+                department = ''
+                section = ''
+                try:
+                    if not (' L0' in lines_without_header[line_no + 1]) and not (' T0' in lines_without_header[line_no + 1]) and not (len([char for char in lines_without_header[line_no + 1] if char.isdigit()]) >= 5):
+                        department = lines_without_header[line_no + 1][:-1]
+                    if not (' L0' in lines_without_header[line_no + 2]) and not (' T0' in lines_without_header[line_no + 2]) and not (len([char for char in lines_without_header[line_no + 2] if char.isdigit()]) >= 5):
+                        section = lines_without_header[line_no + 2][:-1]
+                except:
+                    pass
 
-                    if lines_without_header[line_no] == 'P1\n':
-                        plant = 'P01'
-                    if lines_without_header[line_no] == 'P3\n':
-                        plant = 'P03'
+                if lines_without_header[line_no] == 'P1\n':
+                    plant = 'P01'
+                if lines_without_header[line_no] == 'P3\n':
+                    plant = 'P03'
 
-                elif 'Employee Count :' in lines_without_header[line_no]:
-                    avoid_employee_count_line = line_no
-                    department = ''
-                    section = ''
-                    try:
-                        if not (' L0' in lines_without_header[line_no + 2]) and not (' T0' in lines_without_header[line_no + 2]) and not (len([char for char in lines_without_header[line_no + 2] if char.isdigit()]) >= 5):
-                            department = lines_without_header[line_no + 2][:-1]
-                        if not (' L0' in lines_without_header[line_no + 3]) and not (' T0' in lines_without_header[line_no + 3]) and not (len([char for char in lines_without_header[line_no + 3] if char.isdigit()]) >= 5):
-                            section = lines_without_header[line_no + 3][:-1]
-                    except:
-                        pass
-                if line_no == avoid_employee_count_line or line_no == avoid_employee_count_line+1:
-                    continue
-                else:
-                    try:
-                        for i in range(len(lines_without_header[line_no])):
-                            if (lines_without_header[line_no][i] == 'T' or lines_without_header[line_no][i] == 'L') and lines_without_header[line_no][i+1].isdigit() and lines_without_header[line_no][i-1] == " ":
-                                name = lines_without_header[line_no][:i-2]
-                                id = lines_without_header[line_no][i:i+7]
-                                final_lines.append(name + '\t\t\t' + id + '\t\t\t' + plant +
-                                                   '\t\t\t' + department + '\t\t\t' + section + '\n')
-                    except:
-                        pass
+            elif 'Employee Count :' in lines_without_header[line_no]:
+                avoid_employee_count_line = line_no
+                department = ''
+                section = ''
+                try:
+                    if not (' L0' in lines_without_header[line_no + 2]) and not (' T0' in lines_without_header[line_no + 2]) and not (len([char for char in lines_without_header[line_no + 2] if char.isdigit()]) >= 5):
+                        department = lines_without_header[line_no + 2][:-1]
+                    if not (' L0' in lines_without_header[line_no + 3]) and not (' T0' in lines_without_header[line_no + 3]) and not (len([char for char in lines_without_header[line_no + 3] if char.isdigit()]) >= 5):
+                        section = lines_without_header[line_no + 3][:-1]
+                except:
+                    pass
+            if line_no == avoid_employee_count_line or line_no == avoid_employee_count_line+1:
+                continue
+            else:
+                try:
+                    for i in range(len(lines_without_header[line_no])):
+                        if (lines_without_header[line_no][i] == 'T' or lines_without_header[line_no][i] == 'L') and lines_without_header[line_no][i+1].isdigit() and lines_without_header[line_no][i-1] == " ":
+                            name = lines_without_header[line_no][:i-2]
+                            id = lines_without_header[line_no][i:i+7]
+                            final_lines.append(name + '\t\t\t' + id + '\t\t\t' + plant +
+                                               '\t\t\t' + department + '\t\t\t' + section + '\n')
+                except:
+                    pass
 
-            with open('final_employee_list.txt', 'w+') as f:
-                f.writelines(final_lines)
+        with open('final_employee_list.txt', 'w+') as f:
+            f.writelines(final_lines)
 
-            # Open file in editor
-            os.startfile('final_employee_list.txt')
-
-        else:
-            with open('final_employee_list.txt', 'w+') as f:
-                f.writelines("Invalid File Selected - The file you have selected is incorrect. Please select the correct file and try again.")
-
-            # Open file in editor
-            os.startfile('final_employee_list.txt')
+        # Open file in editor
+        os.startfile('final_employee_list.txt')
 
     def filter(self):
         filter_text = self.filter_entry.get().lower()
@@ -184,9 +182,9 @@ class Application(tk.Tk):
             with open('final_employee_list.txt', 'r') as f:
                 raw_lines = f.readlines()
 
-            last_update = raw_lines[0][11:-1] 
+            last_update = raw_lines[0][11:-1]
 
-            filtered_lines = [f"Data up to {last_update}, for latest updates please upload new set.\n\n",]
+            filtered_lines = [f"Data up to {last_update}, for latest updates please upload new set.\n\n", ]
             for line in raw_lines[1:]:
                 line_lower = line.lower()
                 if filter_text in line_lower:
@@ -202,4 +200,7 @@ class Application(tk.Tk):
 
 if __name__ == '__main__':
     app = Application()
-    app.mainloop()
+    if len(sys.argv) > 1:
+        app.upload(sys.argv[1])
+    else:
+        app.mainloop()
